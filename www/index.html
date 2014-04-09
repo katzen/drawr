@@ -1,0 +1,240 @@
+<html><head>
+    <title>KittyPaint!</title>
+    
+    <meta name="viewport" content="width=device-width" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    
+    <link rel="stylesheet" type="text/css" href="css/default.css"/>
+    <link rel="stylesheet" type="text/css" href="css/login.css"/>
+</head>
+<body>
+    
+    <!-- DRAWR -->
+    <center>
+		<div id="minimized_ui" class="drawr_ui" style="width:35px;height:35px;display:none;" onClick="toggleMinimizeUI();">
+			<div class="selected_box" id="minimized_brush_box">&nbsp;</div>
+		</div>
+        <div id="drawr_ui" class="drawr_ui">
+            <div class="button_holder">
+                <!--<div style="overflow: auto;">
+                    <a href="#" style="margin-right:3px;" class="arrow_box" onClick="prevBrushPage(); return false;">&lt;&lt;</a>
+                    <div class="select_box" id="brush_box0" onClick="selectBrush(0);">&nbsp;</div>
+                    <div class="select_box" id="brush_box1" onClick="selectBrush(1);">&nbsp;</div>
+                    <div class="select_box" id="brush_box2" onClick="selectBrush(2);">&nbsp;</div>
+                    <div class="select_box" id="brush_box3" onClick="selectBrush(3);">&nbsp;</div>
+                    <div class="select_box" id="brush_box4" onClick="selectBrush(4);">&nbsp;</div>
+                    <div class="select_box" id="brush_box5" onClick="selectBrush(5);">&nbsp;</div>
+                    <div class="select_box" id="brush_box6" onClick="selectBrush(6);">&nbsp;</div>
+                    <div class="select_box" id="brush_box7" onClick="selectBrush(7);">&nbsp;</div>
+                    <div class="select_box" id="brush_box8" onClick="selectBrush(8);">&nbsp;</div>
+                    <div class="select_box" id="brush_box9" onClick="selectBrush(9);">&nbsp;</div>
+                    <a href="#" class="arrow_box" id="right_brush_arrow" onClick="nextBrushPage(); return false;">&gt;&gt;</a>
+                </div>
+				
+				<div style="overflow: auto;">
+					<div id="size_picker">
+						<div class="select_box" id="size_box0" onClick="selectBrushSize(0,1);">1</div>
+						<div class="select_box" id="size_box1" onClick="selectBrushSize(1,4);">4</div>
+						<div class="select_box" id="size_box2" onClick="selectBrushSize(2,8);">8</div>
+						<div class="select_box" id="size_box3" onClick="selectBrushSize(3,16);">16</div>
+						<div class="select_box" id="size_box4" onClick="selectBrushSize(4,32);">32</div>
+					</div>
+					<div id="color_picker" style="line-height:32px;display:none;">
+						<div class="color_pick_part">&nbsp;<b>R</b> 
+							<input id="color_r" type="text" style="width:36px;text-align:right;" onkeypress="editColor();" onkeyup="editColor();">
+                        </div>
+						<div class="color_pick_part">&nbsp;<b>G</b> 
+							<input id="color_g" type="text" style="width:36px;text-align:right;" onkeypress="editColor();" onkeyup="editColor();">
+                        </div>
+						<div class="color_pick_part">&nbsp;<b>B</b> 
+							<input id="color_b" type="text" style="width:36px;text-align:right;margin-right:1px;" onkeypress="editColor();" onkeyup="editColor();">
+                            &nbsp;
+						</div>
+					</div>
+					<div class="select_box" id="color_box" onClick="toggleColorPicker();">
+					</div>
+					<div class="select_box" id="stamp_box" onClick="toggleStampUI();" 
+						style="background: url('brushes/createstamp.png')"></div>
+            
+					<div style="line-height:32px;float:right;text-align:center;">
+						<div>
+						<span>Zoom: </span>
+						<select id="zoom_list" onchange="select_zoom();">
+							<!--option>0.5</option-                               ->
+							<option>1</option>
+							<option>2</option>
+							<option>4</option>
+							<option>8</option>
+							<option>16</option>
+						</select>
+						&nbsp;
+						<div style="display:inline;">
+							<input type="button" value="&ndash;" id="toggle_min_tab" onClick="toggleMinimizeUI();"/>
+							<input type="button" value="+" id="toggle_max_tab" onClick="toggleAdv();"/>
+						</div>
+						</div>
+					</div>
+                </div-->
+            </div>
+			
+            <span id="adv_tab" style="display:inline;">
+				<!--div class="button_holder">
+					auto-hide ui: <input id="auto_hide_ui" type="checkbox" onClick="toggleAutoHideUI();">
+				</div-->
+                <!--div class="button_holder">
+                    server: <input type="text" id="server_url" class="server_box" value="127.0.0.1:27182"/>
+                    <input type="button" value="connect" onClick="set_server();"/>
+                </div>
+				<br/>
+				<div class="button_holder">
+                    <input type="text" id="tele_waypoint" class="position_box" placeholder="Enter waypoint..."/>
+                    <input type="button" value="go" onclick="teleport_go();"/>
+				</div-->
+				<div class="button_holder">
+                    <input type="button" value="debug: off" id="debug_toggle" onclick="debug_toggle();"/>
+                </div>
+                <div class="button_holder" style="overflow-y:scroll;height:3em;border: 1px solid black;">
+                    <div id="debug">-<br/>-<br/>-</div>
+                </div>
+            </span>
+			
+			<div id="edit_stamp_ui" style="display:none;">
+				<canvas id="stampcanvas" oncontextmenu="return false;" style="margin-top:10px;border:solid black 1px;">
+					Pls upgrade browser
+				</canvas><br/><br/>
+				<div style="display:inline;">
+					<input type="button" value="Save" id="save_stamp" onClick="return false;"/>
+					<input type="button" value="Clear" id="clear_stamp" onClick="return false;"/>
+				</div>
+			</div>
+        </div>
+
+        <canvas id="kittycanvas" oncontextmenu="return false;">
+            Pls upgrade browser
+        </canvas>
+    
+    </center>
+
+</body>
+
+<!-- UI SCRIPTS -->
+<!--script type="text/javascript" src="login_popup.js"></script-->
+
+<!-- DRAWR SCRIPTS -->
+<script type="text/javascript" src="utils.js"></script>
+<!--script type="text/javascript" src="md5_crypt.js"></script-->
+<!--script type="text/javascript" src="drawr_brushes.js"></script-->
+<script type="text/javascript" src="voxel_draw.js"></script>
+<script type="text/javascript" src="drawr_chunk.js"></script>
+<script type="text/javascript" src="drawr_map.js"></script>
+<!--script type="text/javascript" src="drawr_client.js"></script-->
+<script type="text/javascript" src="drawr.js"></script>
+<script type="text/javascript" src="drawr_input.js"></script>
+
+<script type="text/javascript">
+    
+    var DEBUG_MODE_GLOBAL = 0;
+    function debug_toggle(){
+        if(!DEBUG_MODE_GLOBAL){
+            DEBUG_MODE_GLOBAL = 1;
+            $("debug_toggle").value = "debug: on";
+        }else{
+            DEBUG_MODE_GLOBAL = 0;
+            $("debug_toggle").value = "debug: off";
+        }
+    }
+    
+    //$("zoom_list").selectedIndex = 1;
+    
+    
+	/******* SETUP *******/
+    
+    //var drawr_client = new DrawrClient("127.0.0.1:27182");
+    
+    var drawr = new Drawr("kittycanvas", "debug");
+	//drawr.addEventListener("mapmove", update_position_box);
+
+	function select_zoom(){ //?
+		var zoom = $("zoom_list").value;
+		drawr.changePixelScale(zoom);
+		drawr.loadNearbyChunks();
+		$("zoom_list").blur();
+        $("kittycanvas").focus();
+		
+		if (zoom < 1){
+			$("kittycanvas").style.cursor = "not-allowed";
+		}else{ $("kittycanvas").style.cursor = "default";
+		}
+	}
+	
+	function minimizeUI(){ //?
+		dui = $("drawr_ui");
+		mdui = $("minimized_ui");
+		if (dui.style.display != "none"){
+			dui.style.display = "none";
+			mdui.style.display = "block";
+		}
+	}
+	
+	function toggleMinimizeUI(){ //?
+		a = $("adv_tab");
+		if (a.style.display != "none"){
+			a.style.display = "none";
+		}else{
+			dui = $("drawr_ui");
+			mdui = $("minimized_ui");
+			if (dui.style.display != "none"){
+				dui.style.display = "none";
+				mdui.style.display = "block";
+			}else{
+				dui.style.display = "block";
+				mdui.style.display = "none";
+			}
+		}
+	}
+    
+    function toggleAdv(){ //?
+        a = $("adv_tab");
+        if(a.style.display != "none"){
+            a.style.display = "none";
+        }else{
+            a.style.display = "inline";
+        }
+    }
+    
+    function teleport_go(){ //?
+        var waypointstr = $("tele_waypoint").value;
+        if(waypointstr != ""){
+            var rstr_loc = hex_md5(waypointstr);
+            var hex_x = rstr_loc.substr(0,8);
+            var hex_y = rstr_loc.substr(8,8);
+            var x = parseInt(hex_x, 16) - 0xffffffff/2;
+            var y = parseInt(hex_y, 16) - 0xffffffff/2;
+            console.log(x + "," + y);
+        }else{
+            var x = 0;
+            var y = 0;
+        }
+        
+        drawr.drawr_map.setIngameOffsetX(x);
+        drawr.drawr_map.setIngameOffsetY(y);
+        drawr.loadNearbyChunks();
+    }
+    
+    function set_server(){ //?
+        var server = $("server_url").value;
+        if(!server.match(/^[^\/]*$/)){
+            server = drawr_client.server;
+            $("server_url").value = server;
+        }
+        drawr_client.stop();
+        drawr_client.server = server;
+        drawr_client.start();
+        
+        drawr.drawr_map.setOfflineMode(0);
+        drawr.refresh();
+    }
+    
+    
+</script>
+</html>

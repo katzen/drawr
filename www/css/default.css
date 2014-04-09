@@ -1,0 +1,114 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+#kittycanvas {
+    display: block;
+    //border:1px solid black;
+    border: 0px;
+}
+.drawr_ui {
+    padding: 5px;
+    border: solid black;
+    border-width: 1px;
+    margin: 1px;
+    background: #DEDECE;
+    
+    position: absolute;
+    opacity: 0.8;
+    filter:alpha(opacity:80);
+    
+    top: 15px;
+    left: 15px;
+    
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    //border-width: 0px 0px 1px 0px;
+    //top: 0px;
+    //left: 0px;
+    //right: 0px;
+}
+.drawr_ui:hover {
+    opacity: 1.0;
+    filter:alpha(opacity:100);
+}
+.server_box {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    padding: 1px;
+}
+.server_box:focus {
+    background-color: #D7EFFF;
+}
+.button_holder {
+    float:left;
+    margin: 0px 10px;
+}
+.arrow_box{
+    width: 32px;
+    height: 32px;
+    line-height:32px;
+    text-align: center;
+    padding: 1px;
+    float: left;
+}
+.select_box{
+    width: 32px;
+    height: 32px;
+    border: solid black 1px;
+    color: black;
+    float:left;
+    margin-right:3px;
+    margin-bottom:3px;
+    cursor:pointer;
+    line-height: 32px;
+}
+.color_pick_part{
+    float:left;
+    margin-right:3px;
+    margin-bottom:3px;
+    height:32px;
+}
+.selected_box{
+    width: 32px;
+    height: 32px;
+    border: solid white 1px;
+    color: black;
+    float:left;
+    margin-right:3px;
+    margin-bottom:3px;
+    cursor:pointer;
+    line-height: 32px;
+}
+.disabled_select_box{
+    width: 32px;
+    height: 32px;
+    border: solid #A0A0A0 1px;
+    color: #A0A0A0;
+    float:left;
+    margin-right:3px;
+    margin-bottom:3px;
+    line-height: 32px;
+}
+.position_box {
+    background-color: #FFF;
+    border: 1px solid black;
+    //width: 150px;
+    margin: 1px;
+}
+canvas {
+    image-rendering: optimizeSpeed;             // Older versions of FF
+    image-rendering: -moz-crisp-edges;          // FF 6.0+
+    image-rendering: -webkit-optimize-contrast; // Webkit
+                                                //  (Safari now, Chrome soon)
+    image-rendering: -o-crisp-edges;            // OS X & Windows Opera (12.02+)
+    image-rendering: optimize-contrast;         // Possible future browsers.
+    -ms-interpolation-mode: nearest-neighbor;   // IE
+}
