@@ -1,19 +1,23 @@
 
 
 function DrawrMap(drawr_client, offline_mode){
-    this.drawr_client = drawr_client;
-    this.offline_mode = offline_mode || 1;
+    //this.drawr_client = drawr_client;
+    //this.offline_mode = offline_mode || 1;
     
-	this.chunk_block_size = 256;
-	this.per_pixel_scaling = 2; // pixel is 2x2
-	this.chunk_onscreen_size = this.chunk_block_size * this.per_pixel_scaling;
+	this.per_pixel_scaling = 8; // pixel is 2x2
+	this.chunk_onscreen_size = CHUNK_BLOCK_SIZE * this.per_pixel_scaling;
 	
     // hash of chunks - not array because we need negative and positive locations, and to be able to skip some
     this.chunks = {}; // keyed by xth chunk, value is a hash keyed by yth chunk
-    this.chunks_loaded = [];
     
     this.offsetX = 0; // offset in client pixels of top left of chunk (0,0)
     this.offsetY = 0;
+    
+    for(var i=-1;i<2;++i){
+        for(var j=-1;j<2;++j){
+            this.loadChunk(i,j);
+        }
+    }
 }
 
 DrawrMap.prototype.setOfflineMode = function(offline_mode){
@@ -45,30 +49,14 @@ DrawrMap.prototype.moveY = function(dist){
 }
 
 DrawrMap.prototype.loadChunk = function(chunk_numx, chunk_numy){
-    // This function ensures that there's a DrawrChunk in this chunk location, then
-    // it starts loading the chunk image from the server.
-    // The actual chunk from the server MIGHT NOT BE LOADED YET AFTER THIS FUNCIONT RETURNS!!
     
     if(!this.chunks.hasOwnProperty(chunk_numx)){
         this.chunks[chunk_numx] = {};
     }
     if(!this.isChunkLoaded(chunk_numx, chunk_numy)){
-        this.chunks[chunk_numx][chunk_numy] = new DrawrChunk(this, this.offline_mode);
+        this.chunks[chunk_numx][chunk_numy] = new DrawrChunk();
     }
-    this.chunks[chunk_numx][chunk_numy].load(chunk_numx, chunk_numy);
     
-    this.chunks_loaded.push({x: chunk_numx, y: chunk_numy}); // this array isn't used i think, not necessary. will see.
-}
-
-DrawrMap.prototype.setChunk = function(chunk_numx, chunk_numy, bin_img){
-    var base64url = "data:image/png;base64," + btoa(bin_img);
-    if(!this.chunks.hasOwnProperty(chunk_numx)){
-        this.chunks[chunk_numx] = {};
-    }
-    if(!this.isChunkLoaded(chunk_numx, chunk_numy)){
-        this.chunks[chunk_numx][chunk_numy] = new DrawrChunk(this, this.offline_mode);
-    }
-    this.chunks[chunk_numx][chunk_numy].setImageUrl(base64url);
 }
 
 DrawrMap.prototype.unloadChunk = function(chunk_numx, chunk_numy){
@@ -107,6 +95,8 @@ DrawrMap.prototype.refresh = function(viewer_radius){
 }
 
 DrawrMap.prototype.loadNearbyChunks = function(viewer_radius){
+    console.log("loadNearbyChunks(): disabled"); return false;
+
     // viewer_radius is max(screen width, screen height), and is approximately 1 "screen length"
     // load all chunks within 1 screen length away from what is visible
     // load from the center out! <---- TODO!!!
@@ -170,6 +160,7 @@ DrawrMap.prototype.loadNearbyChunks = function(viewer_radius){
 }
 
 DrawrMap.prototype.freeFarChunks = function(viewer_radius){
+    console.log("freeFarChunks(): disabled"); return false;
     // viewer_radius is max(screen width, screen height), and is approximately 1 "screen length"
     // free all chunks outside 2 screen lengths away from what is visible
     var ingameX = -this.getIngameOffsetX();
@@ -199,15 +190,9 @@ DrawrMap.prototype.freeFarChunks = function(viewer_radius){
     didit && DEBUG_MODE_GLOBAL && console.log(str);
 }
 
-DrawrMap.prototype.addPointRelative = function(x, y, screenOffsetX, screenOffsetY, brush){
-    // x,y, offsets are true pixels per client
-    var relx = x + screenOffsetX;
-    var rely = y + screenOffsetY;
-    this.addPoint(relx, rely, brush);
-}
-
   
-DrawrMap.prototype.addPoint = function(x,y,brush,size){
+DrawrMap.prototype.addPointComplicated = function(x,y,brush,size){
+    console.log("addPointComplicated(): disabled"); return false;
     
     // if(this.per_pixel_scaling < 1) return; // don't do this while we're in dev mode
     
@@ -235,14 +220,6 @@ DrawrMap.prototype.addPoint = function(x,y,brush,size){
                     var localy = chunks_local_coords[i].y;
                     chunk.addPoint(localx, localy, brush,size);
                     
-                    /***** I FEEL LIKE THIS SHOULD BE ABSTRACTED BETTER *****/
-                    /*// make new thread
-                    (function(chunk_numx, chunk_numy, localx, localy, brush, size){
-                        setTimeout( function(){
-                            self.drawr_client.addPoint(chunk_numx, chunk_numy, localx, localy, brush, size);
-                        }, 0);
-                    })(chunk_numx, chunk_numy, localx, localy, brush, size);
-                    */
                 }else{
                     console.log("Chunk not loaded: (" + chunk_numx + ", " + chunk_numy + ")");
                 }
@@ -259,8 +236,7 @@ DrawrMap.prototype.addPoint = function(x,y,brush,size){
     })(gamex, gamey, brush, size);
 }
 
-DrawrMap.prototype.oldAddPoint = function(x,y,brush){
-    // DEPRECATED - will incorrectly draw near the edge of chunks
+DrawrMap.prototype.addPoint = function(x,y,z){
     // find where to add to chunk
     var gamex = Math.floor(x/this.per_pixel_scaling); // convert to ingame (big) pixels
     var gamey = Math.floor(y/this.per_pixel_scaling);
@@ -271,7 +247,7 @@ DrawrMap.prototype.oldAddPoint = function(x,y,brush){
     
     if(this.isChunkLoaded(chunk_numx, chunk_numy)){
         var chunk = this.chunks[chunk_numx][chunk_numy];
-        chunk.addPoint(chunk_localx, chunk_localy, brush);
+        chunk.set(chunk_localx, chunk_localy, z, 1);
     }else{
         console.log("Chunk not loaded: (" + chunk_numx + ", " + chunk_numy + ")");
     }
@@ -328,27 +304,22 @@ DrawrMap.prototype.getChunksAffected = function(gamex, gamey, brush, size){
     return chunks_found;
 }
 
-DrawrMap.prototype.draw = function(ctx){
-    /*ctx.imageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.drawImage(this.canvas, 0, 0, this.chunk_block_size*this.per_pixel_scaling, this.chunk_block_size*this.per_pixel_scaling); //x, y, width, height
-    */
-    
-    ctx.imageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
+DrawrMap.prototype.draw = function(ctx, map_layer){
     
     var self = this;
-    this.foreachChunk(function(chunk_numx, chunk_numy){
+    /*this.foreachChunk(function(chunk_numx, chunk_numy){
         var onscreenx = chunk_numx * self.chunk_onscreen_size + self.offsetX;
         var onscreeny = chunk_numy * self.chunk_onscreen_size + self.offsetY;
         var chunk_canvas = self.chunks[chunk_numx][chunk_numy].canvas;
         ctx.drawImage(chunk_canvas, onscreenx, onscreeny, self.chunk_onscreen_size, self.chunk_onscreen_size);
-    });
+    });*/
+    
+    var deep_points = [];
+    for(var i=-1;i<2;++i){
+        for(var j=-1;j<2;++j){
+            var chunks = this.chunks[i][j];
+            deep_points = deep_points.concat(chunks.topLayerBelowZ(map_layer));
+        }
+    }
 }
 
-
-// https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Canvas_tutorial/Using_images
-// http://www.w3schools.com/tags/canvas_drawimage.asp
-// http://stackoverflow.com/questions/10525107/html5-canvas-image-scaling-issue

@@ -61,6 +61,11 @@ function addPoints(p1, p2){
     return {x: p1.x + p2.x, y: p1.y + p2.y, z: p1.z + p2.z};
 }
 
+// general functions
+
+function curry(f, x){
+    return function(y){ f(x,y); };
+}
 
 function mod(m, n) {
     return ((m % n) + n) % n;

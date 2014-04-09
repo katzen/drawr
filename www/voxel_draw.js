@@ -1,13 +1,20 @@
 
 
 var z_scale = 30; // I have no idea why, but it looks right
+// 40 in x = 40/15 in z (WHY? who knows)
+function xyUnitsToZ(i){
+    return i/(z_scale/2);
+}
 
 function position_from_3d(p, width, height){
     // convert 3d point to 2d point on screen
     
+    //var z = xyUnitsToZ(p.z) + 0;
     if(p.z <= 0) DEBUG_MODE_GLOBAL && console.log("tried to draw behind screen");
     var px = p.x/(p.z/z_scale);
     var py = p.y/(p.z/z_scale);
+    //var px = p.x/z;
+    //var py = p.y/z;
     
     var dx = width/2;
     var dy = height/2;
@@ -18,19 +25,19 @@ function position_from_3d(p, width, height){
 function draw_cube_wireframe(ctx, x, y, z, size){
     
     var s = size/2;
-    var sForZ = s/(z_scale/2); // why do i need this? who knows
+    //z = xyUnitsToZ(z);
     var p = function(x,y,z){ return {x:x, y:y, z:z}; };
     var corners_close = [ // closest (minimum z) plane, from top left, clockwise
-        p(x-s, y-s, z-sForZ),
-        p(x+s, y-s, z-sForZ),
-        p(x+s, y+s, z-sForZ),
-        p(x-s, y+s, z-sForZ)
+        p(x-s, y-s, z-xyUnitsToZ(s)),
+        p(x+s, y-s, z-xyUnitsToZ(s)),
+        p(x+s, y+s, z-xyUnitsToZ(s)),
+        p(x-s, y+s, z-xyUnitsToZ(s))
     ];
     var corners_far = [ // farthest plane
-        p(x-s, y-s, z+sForZ),
-        p(x+s, y-s, z+sForZ),
-        p(x+s, y+s, z+sForZ),
-        p(x-s, y+s, z+sForZ)
+        p(x-s, y-s, z+xyUnitsToZ(s)),
+        p(x+s, y-s, z+xyUnitsToZ(s)),
+        p(x+s, y+s, z+xyUnitsToZ(s)),
+        p(x-s, y+s, z+xyUnitsToZ(s))
     ];
     
     var width = ctx.canvas.width;
@@ -104,7 +111,7 @@ function poly_center_point(poly){
     return point(sums.x/s, sums.y/s, sums.z/s);
 }
 
-function draw_cube(ctx, x, y, z, size){
+function draw_cube(ctx, x, y, z, size, color){
     var polys = get_cube_polygons(ctx, x, y, z, size);
     
     var width = ctx.canvas.width;
@@ -116,17 +123,36 @@ function draw_cube(ctx, x, y, z, size){
     var sorter = function(a,b){ return hypot(poly_center_point(b)) - hypot(poly_center_point(a)); };
     polys.sort(sorter);
     
-    for(var i=0; i<6; ++i){
-        DEBUG_MODE_GLOBAL && console.log(poly_center_point(polys[i]));
-    }
-    
     var colorses = ["red", "blue", "black", "green", "purple", "orange"];
     for(var i=0; i<polys.length; ++i){
         var poly2d = polys[i].map(pos);
-        fillPolygon(ctx, colorses[i], poly2d);
+        if(color){
+            fillPolygon(ctx, color, poly2d);
+        }else{
+            fillPolygon(ctx, colorses[i], poly2d);
+        }
     }
     for(var i=0; i<polys.length; ++i){
         var centerp = pos(poly_center_point(polys[i]));
         fillCircle(ctx, "red", centerp.x, centerp.y, 3);
+    }
+}
+
+function draw_cubes(ctx, points, size, colors){
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+    
+    var sorter = function(a,b){ return hypot(b) - hypot(a); };
+    points.sort(sorter);
+    
+    for(var i=0; i<points.length; ++i){
+        if(colors){
+            draw_cube(ctx, points[i].x, points[i].y, points[i].z, size, colors[i]);
+        }else{
+            draw_cube(ctx, points[i].x, points[i].y, points[i].z, size);
+        }
+    }
+    for(var i=0; i<points.length; ++i){
+        draw_cube_wireframe(ctx, points[i].x, points[i].y, points[i].z, size);
     }
 }

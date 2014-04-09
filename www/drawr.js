@@ -88,11 +88,24 @@ Drawr.prototype.freeFarChunks = function(){
 
 
 
+                var dumb_points = [];
+                for(var i=0;i<3;++i){
+                    var x = (Math.floor(3*Math.random())-1)*40;
+                    var y = (Math.floor(3*Math.random())-1)*40;
+                    var z = i + 20; //Math.floor(3*Math.random()) + 20;
+                    dumb_points.push(point(x,y,z));
+                }
+                function dumb(n){return Math.max(-1*40, Math.min(1*40, n));}
+                function ugh(p){
+                    var delx = (Math.floor(3*Math.random()) - 1)*40;//(Math.floor(3*Math.random()) - 1)*40;
+                    var dely = (Math.floor(3*Math.random()) - 1)*40;//(Math.floor(3*Math.random()) - 1)*40;
+                    return {x: dumb(p.x+delx), y: dumb(p.y+dely), z: p.z};
+                }
+                
 Drawr.prototype.update = function(){
     if(this.update_lock) return; // only allow 1 instance of update to run at a time
     this.update_lock = true;
     
-
     this.total_frame_count++;
     this.fps_counter++;
     var nowTime = now();
@@ -103,18 +116,45 @@ Drawr.prototype.update = function(){
         this.fps_counter = 0;
         
         this.updateDebugString(); // update this every second while we're at it
-        this.freeFarChunks();
+        /////////this.freeFarChunks();
+        
+        ////////
+        dumb_points = dumb_points.map(ugh);
     }
     this.writeDebug();
     
     this.ctx.fillStyle = "rgb(255,255,255)";
     this.ctx.fillRect(0,0,this.getWidth(),this.getHeight());
     
+    
+    
+    var colors = ["red", "blue", "black", "green", "purple", "orange", "gray", "yellow"];
+    draw_cubes(this.ctx, dumb_points, 40, colors);
+    
+    
+    
+    var ok_points = [];
+    for(var i=0;i<3;++i){
+        var x = 6*40;
+        var y = -3*40;
+        var derp = Math.cos(this.total_frame_count*5 / 180 * 3.14159) + 2;
+        //var z = (i*derp)*40 + 20; 
+        var z = xyUnitsToZ((i*derp)*40) + 20;
+        ok_points.push(point(x,y,z));
+    }
+    draw_cubes(this.ctx, ok_points, 40, colors);
+    //for(var i=0;i<3;++i){
+    //    draw_cube_wireframe(this.ctx, ok_points[i].x, ok_points[i].y, ok_points[i].z, 40);
+    //}
+    
+    
+    
     var x = 200 * Math.cos(this.total_frame_count / 180 * 3.14159);
     var y = 200 * Math.sin(this.total_frame_count / 180 * 3.14159);
     var z = 20; //20 * Math.sin(this.total_frame_count * 5 / 180 * 3.14159) + 21;
     
-    draw_cube(this.ctx, x, y, z, 40);
+    draw_cube(this.ctx, x, y, z, 30);
+    draw_cube(this.ctx, x+50, y, z, 40);
     
     //this.drawr_map.draw(this.ctx);
 

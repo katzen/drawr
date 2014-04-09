@@ -1,25 +1,69 @@
 
-function DrawrChunk(drawr_map, offline_mode){
-    this.drawr_map = drawr_map;
-    this.offline_mode = offline_mode;
-    
-    this.canvas = document.createElement("canvas");
-    this.canvas.width = this.width = drawr_map.chunk_block_size;
-    this.canvas.height = this.height = drawr_map.chunk_block_size;
-    this.ctx = this.canvas.getContext("2d");
-    
-    /*this.ctx.imageSmoothingEnabled = false;
-    this.ctx.mozImageSmoothingEnabled = false;
-    this.ctx.webkitImageSmoothingEnabled = false;*/
-    
-    var w = this.canvas.width;
-    drawLine(this.ctx, "yellow", 1, 1, w - 1, 1, 1);
-    drawLine(this.ctx, "red", w-1, w-1, w-1, 1, 1);
-    drawLine(this.ctx, "green", 1, 1, 1, w-1, 1);
-    drawLine(this.ctx, "purple", 1, w-1, w-1, w-1, 1);
+var CHUNK_BLOCK_SIZE = 16;
+var CHUNK_BLOCK_DEPTH = 32;
+
+function DrawrChunk(){
+    this.blocks = [];
+    for(var x=0; x<CHUNK_BLOCK_SIZE; ++x){
+        this.blocks[x] = [];
+        for(var y=0; y<CHUNK_BLOCK_SIZE; ++y){
+            this.blocks[x][y] = [];
+            for(var z=0; z<CHUNK_BLOCK_DEPTH; ++z){
+                this.blocks[x][y][z] = 0;
+            }
+        }
+    }
 }
-DrawrChunk.prototype.addPoint = function(local_x,local_y,brush,size){
-	DrawrBrushes.draw(this.ctx, local_x, local_y, brush, size);
+
+DrawrChunk.prototype.set = function(x, y, z, block){
+    if(x < 0 || y < 0 || z < 0 || x > CHUNK_BLOCK_SIZE || y > CHUNK_BLOCK_SIZE || z > CHUNK_BLOCK_DEPTH){
+        return false;
+    }else{
+        this.blocks[x][y][z] = block;
+    }
+    return true;
 }
-DrawrChunk.prototype.load = function(numx, numy){
+
+DrawrChunk.prototype.get = function(x, y, z){
+    if(x < 0 || y < 0 || z < 0 || x > CHUNK_BLOCK_SIZE || y > CHUNK_BLOCK_SIZE || z > CHUNK_BLOCK_DEPTH){
+        return 0;
+    }else{
+        return this.blocks[x][y][z];
+    }
+}
+
+DrawrChunk.prototype.topLayerBelowZ = function(z_layer){
+    // only top layer will be visible below whatever z level the user is at
+    var points = [];
+    for(var x=0; x<CHUNK_BLOCK_SIZE; ++x){
+        for(var y=0; y<CHUNK_BLOCK_SIZE; ++y){
+            for(var z=z_layer; z<CHUNK_BLOCK_DEPTH; ++z){
+                if(this.blocks[x][y][z] == 1){
+                    // put the top block on this column
+                    points.push(point(x,y,z));
+                    // check points below it until all the blocks around it are covered
+                    for(var depth=z-1; depth>=0; depth--){
+                        if(!get(x-1, y-1, depth) || !get(x-1,y+1,depth) || !get(x+1,y-1,depth) || !get(x+1,y+1,depth)){
+                            points.push(point(x,y,z));
+                        }
+                    }
+                    break; // out of this z column
+                }
+            }
+        }
+    }
+    return points;
+}
+
+DrawrChunk.prototype.layersAboveZ = function(z_layer, max_layers){
+    var points = [];
+    var start_at_z = Math.min(0, z_layers - max_layers);
+    for(var x=0; x<CHUNK_BLOCK_SIZE; ++x){
+        for(var y=0; y<CHUNK_BLOCK_SIZE; ++y){
+            for(var z = start_at_z; z<z_layer; ++z){
+                points.push(point(x,y,z));
+            }
+        }
+    }
+    return points;
 }

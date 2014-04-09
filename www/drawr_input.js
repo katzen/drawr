@@ -215,5 +215,6 @@ Drawr.prototype.mouseupEvent = function(e){
 
 Drawr.prototype.mousewheelEvent = function(e){
     var delta = e.detail ? e.detail : e.wheelDelta / (-120);
-    console.log(delta);
+    this.map_depth = Math.max(0, Math.min(CHUNK_BLOCK_DEPTH, this.map_depth - delta));
+    DEBUG_MODE_GLOBAL && console.log(this.map_depth);
 }
