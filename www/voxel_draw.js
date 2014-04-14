@@ -138,7 +138,8 @@ function draw_cube(ctx, x, y, z, size, color){
     }
 }
 
-function draw_cubes(ctx, points, size, colors){
+function draw_cubes(ctx, points, size, colors, fix_z){
+    fix_z = fix_z || 0;
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
     
@@ -146,13 +147,15 @@ function draw_cubes(ctx, points, size, colors){
     points.sort(sorter);
     
     for(var i=0; i<points.length; ++i){
+        var z = fix_z ? xyUnitsToZ(points[i].z) + 20 : points[i].z;
         if(colors){
-            draw_cube(ctx, points[i].x, points[i].y, points[i].z, size, colors[i]);
+            draw_cube(ctx, points[i].x, points[i].y, z, size, colors[i]);
         }else{
-            draw_cube(ctx, points[i].x, points[i].y, points[i].z, size);
+            draw_cube(ctx, points[i].x, points[i].y, z, size);
         }
     }
     for(var i=0; i<points.length; ++i){
-        draw_cube_wireframe(ctx, points[i].x, points[i].y, points[i].z, size);
+        var z = fix_z ? xyUnitsToZ(points[i].z) + 20 : points[i].z;
+        draw_cube_wireframe(ctx, points[i].x, points[i].y, z, size);
     }
 }

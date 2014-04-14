@@ -92,7 +92,7 @@ Drawr.prototype.freeFarChunks = function(){
                 for(var i=0;i<3;++i){
                     var x = (Math.floor(3*Math.random())-1)*40;
                     var y = (Math.floor(3*Math.random())-1)*40;
-                    var z = i + 20; //Math.floor(3*Math.random()) + 20;
+                    var z = xyUnitsToZ(i*40) + 20; //Math.floor(3*Math.random()) + 20;
                     dumb_points.push(point(x,y,z));
                 }
                 function dumb(n){return Math.max(-1*40, Math.min(1*40, n));}
@@ -138,11 +138,11 @@ Drawr.prototype.update = function(){
         var x = 6*40;
         var y = -3*40;
         var derp = Math.cos(this.total_frame_count*5 / 180 * 3.14159) + 2;
-        //var z = (i*derp)*40 + 20; 
-        var z = xyUnitsToZ((i*derp)*40) + 20;
+        var z = (i*derp)*40; 
+        //var z = xyUnitsToZ((i*derp)*40) + 20;
         ok_points.push(point(x,y,z));
     }
-    draw_cubes(this.ctx, ok_points, 40, colors);
+    draw_cubes(this.ctx, ok_points, 40, colors, true);
     //for(var i=0;i<3;++i){
     //    draw_cube_wireframe(this.ctx, ok_points[i].x, ok_points[i].y, ok_points[i].z, 40);
     //}
