@@ -149,7 +149,7 @@ function draw_cubes(ctx, points, size, colors, fix_z){
     for(var i=0; i<points.length; ++i){
         var z = fix_z ? xyUnitsToZ(points[i].z) + 20 : points[i].z;
         if(colors){
-            draw_cube(ctx, points[i].x, points[i].y, z, size, colors[i]);
+            draw_cube(ctx, points[i].x, points[i].y, z, size, colors[i % colors.length]);
         }else{
             draw_cube(ctx, points[i].x, points[i].y, z, size);
         }

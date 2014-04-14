@@ -88,18 +88,15 @@ Drawr.prototype.freeFarChunks = function(){
 
 
 
-                var dumb_points = [];
-                for(var i=0;i<3;++i){
-                    var x = (Math.floor(3*Math.random())-1)*40;
-                    var y = (Math.floor(3*Math.random())-1)*40;
-                    var z = xyUnitsToZ(i*40) + 20; //Math.floor(3*Math.random()) + 20;
-                    dumb_points.push(point(x,y,z));
-                }
-                function dumb(n){return Math.max(-1*40, Math.min(1*40, n));}
+                var dumb_chunk = new DrawrChunk();
+                ugh();
                 function ugh(p){
-                    var delx = (Math.floor(3*Math.random()) - 1)*40;//(Math.floor(3*Math.random()) - 1)*40;
-                    var dely = (Math.floor(3*Math.random()) - 1)*40;//(Math.floor(3*Math.random()) - 1)*40;
-                    return {x: dumb(p.x+delx), y: dumb(p.y+dely), z: p.z};
+                    var dumb_chunk = new DrawrChunk();
+                    for(var i=0;i<CHUNK_BLOCK_SIZE;++i){
+                        var y = (Math.floor(CHUNK_BLOCK_SIZE*Math.random()));
+                        var z = (Math.floor(CHUNK_BLOCK_DEPTH*Math.random()));
+                        dumb_chunk.set(i,y,z);
+                    }
                 }
                 
 Drawr.prototype.update = function(){
@@ -119,7 +116,7 @@ Drawr.prototype.update = function(){
         /////////this.freeFarChunks();
         
         ////////
-        dumb_points = dumb_points.map(ugh);
+        ugh();
     }
     this.writeDebug();
     
@@ -128,8 +125,11 @@ Drawr.prototype.update = function(){
     
     
     
+    
+    
+    /****test cuberino ******/
+    
     var colors = ["red", "blue", "black", "green", "purple", "orange", "gray", "yellow"];
-    draw_cubes(this.ctx, dumb_points, 40, colors);
     
     
     
@@ -154,7 +154,12 @@ Drawr.prototype.update = function(){
     var z = 20; //20 * Math.sin(this.total_frame_count * 5 / 180 * 3.14159) + 21;
     
     draw_cube(this.ctx, x, y, z, 30);
-    draw_cube(this.ctx, x+50, y, z, 40);
+    
+   
+    /////// est chunk
+    dumb_chunk.naive_draw(this.ctx);
+    
+    
     
     //this.drawr_map.draw(this.ctx);
 

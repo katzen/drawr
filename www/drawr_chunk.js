@@ -67,3 +67,17 @@ DrawrChunk.prototype.layersAboveZ = function(z_layer, max_layers){
     }
     return points;
 }
+
+DrawrChunk.prototype.naive_draw = function(ctx){
+    var points = [];
+    for(var x=0; x<CHUNK_BLOCK_SIZE; ++x){
+        for(var y=0; y<CHUNK_BLOCK_SIZE; ++y){
+            for(var z=0; z<CHUNK_BLOCK_DEPTH; ++z){
+                if(this.blocks[x][y][z] == 1){
+                    points.push(point(x*40,y*40,z*40));
+                }
+            }
+        }
+    }
+    draw_cubes(ctx, points, 40, ["blue"], true);
+}
