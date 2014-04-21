@@ -72,8 +72,8 @@ function draw_cube_wireframe(ctx, x, y, z, size){
     for(var i=0; i<4; ++i){
         var corner_close = corners_close[i];
         var corner_far = corners_far[i];
-        //if(DEBUG_MODE_GLOBAL) console.log(pos(corner_close));
-        //if(DEBUG_MODE_GLOBAL) console.log(pos(corner_far));
+        if(DEBUG_MODE_GLOBAL) console.log(pos(corner_close));
+        if(DEBUG_MODE_GLOBAL) console.log(pos(corner_far));
         draw(pos(corner_close), pos(corner_far));
         
         if(!last_close && !last_far){
@@ -161,8 +161,7 @@ function draw_cube(ctx, x, y, z, size, color){
     }
 }
 
-function draw_cubes(ctx, points, size, colors, fix_z){
-    fix_z = fix_z || 0;
+function draw_cubes(ctx, points, size, colors){
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
     
@@ -171,15 +170,13 @@ function draw_cubes(ctx, points, size, colors, fix_z){
     points.sort(sorter);
     
     for(var i=0; i<points.length; ++i){
-        var z = fix_z ? xyUnitsToZ(points[i].z) + 20 : points[i].z;
         if(colors){
-            draw_cube(ctx, points[i].x, points[i].y, z, size, colors[i % colors.length]);
+            draw_cube(ctx, points[i].x, points[i].y, points[i].z, size, colors[i]);
         }else{
-            draw_cube(ctx, points[i].x, points[i].y, z, size);
+            draw_cube(ctx, points[i].x, points[i].y, points[i].z, size);
         }
     }
     for(var i=0; i<points.length; ++i){
-        var z = fix_z ? xyUnitsToZ(points[i].z) + 20 : points[i].z;
-        draw_cube_wireframe(ctx, points[i].x, points[i].y, z, size);
+        //draw_cube_wireframe(ctx, points[i].x, points[i].y, points[i].z, size);
     }
 }

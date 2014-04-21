@@ -16,6 +16,7 @@ function DrawrChunk(){
 }
 
 DrawrChunk.prototype.set = function(x, y, z, block){
+    if(typeof block === "undefined") block = 1;
     if(x < 0 || y < 0 || z < 0 || x > CHUNK_BLOCK_SIZE || y > CHUNK_BLOCK_SIZE || z > CHUNK_BLOCK_DEPTH){
         return false;
     }else{
@@ -68,13 +69,13 @@ DrawrChunk.prototype.layersAboveZ = function(z_layer, max_layers){
     return points;
 }
 
-DrawrChunk.prototype.naive_draw = function(ctx){
+DrawrChunk.prototype.naive_draw = function(ctx, offset_x, offset_y){
     var points = [];
     for(var x=0; x<CHUNK_BLOCK_SIZE; ++x){
         for(var y=0; y<CHUNK_BLOCK_SIZE; ++y){
             for(var z=0; z<CHUNK_BLOCK_DEPTH; ++z){
-                if(this.blocks[x][y][z] == 1){
-                    points.push(point(x*40,y*40,z*40));
+                if(this.get(x,y,z) != 0){
+                    points.push(point(x*40 + offset_x, y*40 + offset_y, z*40));
                 }
             }
         }

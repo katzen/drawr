@@ -19,7 +19,7 @@ function fillCircle(ctx,color,x,y,r){
 }
 
 function drawLine(ctx, color, x1, y1, x2, y2, thickness, cap){
-    if(DEBUG_MODE_GLOBAL) console.log("(" + x1 + "," + y1 + ") -> (" + x2 + "," + y2 + ")");
+    //if(DEBUG_MODE_GLOBAL) console.log("(" + x1 + "," + y1 + ") -> (" + x2 + "," + y2 + ")");
     cap = cap || "round";
     ctx.beginPath();
     ctx.moveTo(x1,y1);

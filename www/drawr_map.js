@@ -4,7 +4,7 @@ function DrawrMap(drawr_client, offline_mode){
     //this.drawr_client = drawr_client;
     //this.offline_mode = offline_mode || 1;
     
-	this.per_pixel_scaling = 8; // pixel is 2x2
+	this.per_pixel_scaling = 40;//8;
 	this.chunk_onscreen_size = CHUNK_BLOCK_SIZE * this.per_pixel_scaling;
 	
     // hash of chunks - not array because we need negative and positive locations, and to be able to skip some
@@ -16,6 +16,11 @@ function DrawrMap(drawr_client, offline_mode){
     for(var i=-1;i<2;++i){
         for(var j=-1;j<2;++j){
             this.loadChunk(i,j);
+            for(var qq=0;qq<CHUNK_BLOCK_SIZE;++qq){
+                var y = (Math.floor(CHUNK_BLOCK_SIZE*Math.random()));
+                var z = (Math.floor(CHUNK_BLOCK_DEPTH*Math.random()));
+                this.chunks[i][j].set(qq,y,z);
+            }
         }
     }
 }
@@ -314,12 +319,19 @@ DrawrMap.prototype.draw = function(ctx, map_layer){
         ctx.drawImage(chunk_canvas, onscreenx, onscreeny, self.chunk_onscreen_size, self.chunk_onscreen_size);
     });*/
     
-    var deep_points = [];
+    /*var deep_points = [];
     for(var i=-1;i<2;++i){
         for(var j=-1;j<2;++j){
             var chunks = this.chunks[i][j];
             deep_points = deep_points.concat(chunks.topLayerBelowZ(map_layer));
         }
-    }
+    }*/
+    this.foreachChunk(function(chunk_numx, chunk_numy){
+        var onscreenx = chunk_numx * self.chunk_onscreen_size + self.offsetX;
+        var onscreeny = chunk_numy * self.chunk_onscreen_size + self.offsetY;
+        var offset_x = self.chunk_onscreen_size * 40; // nvm
+        var offset_y = self.chunk_onscreen_size * 40;
+        self.chunks[chunk_numx][chunk_numy].naive_draw(ctx, onscreenx, onscreeny);
+    });
 }
 
