@@ -136,11 +136,10 @@ Drawr.prototype.update = function(){
     
     
     
-    var x = 200 * Math.cos(this.total_frame_count / 180 * 3.14159);
+    /*var x = 200 * Math.cos(this.total_frame_count / 180 * 3.14159); // spinny thing
     var y = 200 * Math.sin(this.total_frame_count / 180 * 3.14159);
     var z = 20; //20 * Math.sin(this.total_frame_count * 5 / 180 * 3.14159) + 21;
-    
-    draw_cube(this.ctx, x, y, z, 30);
+    draw_cube(this.ctx, x, y, z, 30);*/
     
    
     /////// test chunk
@@ -148,7 +147,7 @@ Drawr.prototype.update = function(){
     
     
     
-    this.drawr_map.draw(this.ctx);
+    this.drawr_map.draw(this.ctx, this.map_depth);
 
     this.update_lock = false;
 }

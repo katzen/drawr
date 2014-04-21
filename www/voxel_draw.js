@@ -1,5 +1,6 @@
 
 
+var z_depth_offset = 20; //40;
 var z_scale = 30; // I have no idea why, but it looks right
 // 40 in x = 40/15 in z (WHY? who knows)
 function xyUnitsToZ(i){
@@ -133,6 +134,14 @@ function poly_center_point(poly){
     return point(sums.x/s, sums.y/s, sums.z/s);
 }
 
+function draw_poly(ctx, color, poly2d){
+    var wireframe = 1;
+    fillPolygon(ctx, color, poly2d);
+    if(wireframe){
+        drawPolygon(ctx, "black", poly2d);
+    }
+}
+
 function draw_cube(ctx, x, y, z, size, color){
     var polys = get_cube_polygons(ctx, x, y, z, size);
     
@@ -150,9 +159,9 @@ function draw_cube(ctx, x, y, z, size, color){
     for(var i=0; i<polys.length; ++i){
         var poly2d = polys[i].map(pos);
         if(color){
-            fillPolygon(ctx, color, poly2d);
+            draw_poly(ctx, color, poly2d);
         }else{
-            fillPolygon(ctx, colorses[i], poly2d);
+            draw_poly(ctx, colorses[i], poly2d);
         }
     }
     for(var i=0; i<polys.length; ++i){
@@ -171,15 +180,15 @@ function draw_cubes(ctx, points, size, colors, fix_z){
     points.sort(sorter);
     
     for(var i=0; i<points.length; ++i){
-        var z = fix_z ? xyUnitsToZ(points[i].z) + 20 : points[i].z;
+        var z = fix_z ? xyUnitsToZ(points[i].z) + z_depth_offset : points[i].z;
         if(colors){
             draw_cube(ctx, points[i].x, points[i].y, z, size, colors[i % colors.length]);
         }else{
             draw_cube(ctx, points[i].x, points[i].y, z, size);
         }
     }
-    for(var i=0; i<points.length; ++i){
-        var z = fix_z ? xyUnitsToZ(points[i].z) + 20 : points[i].z;
+    /*for(var i=0; i<points.length; ++i){
+        var z = fix_z ? xyUnitsToZ(points[i].z) + z_depth_offset : points[i].z;
         draw_cube_wireframe(ctx, points[i].x, points[i].y, z, size);
-    }
+    }*/
 }

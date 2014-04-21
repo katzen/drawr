@@ -40,6 +40,16 @@ function fillPolygon(ctx, color, ps){
     ctx.closePath();
     ctx.fill();
 }
+function drawPolygon(ctx, color, ps){
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(ps[0].x, ps[0].y);
+    for(var i=1; i<ps.length; ++i){
+        ctx.lineTo(ps[i].x, ps[i].y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+}
 
 //////// point functions
 

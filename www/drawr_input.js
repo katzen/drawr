@@ -159,7 +159,9 @@ Drawr.prototype.mousemoveEvent = function(e){
         this.drawr_map.moveY(dy);
     }else if(e.which == 1 || e.touches && e.touches.length <= 1){
         if(this.mousedown){
-            this.drawr_map.addPoint(this.mousex, this.mousey, this.map_depth);
+            var offsetx = this.getWidth()/2;
+            var offsety = this.getHeight()/2;
+            this.drawr_map.addPoint(this.mousex - offsetx, this.mousey - offsety, this.map_depth);
         }
     }else if(e.which || e.touches && e.touches.length > 1){
         var dx = this.mousex - this.mouselastx;
@@ -185,7 +187,9 @@ Drawr.prototype.mousedownEvent = function(e){
     
     if(e.which == 1 || e.touches && e.touches.length <= 1){ //e.touches if is only 1 touch
         this.mousedown = true;
-        this.drawr_map.addPoint(this.mousex, this.mousey, this.map_depth);
+        var offsetx = this.getWidth()/2;
+        var offsety = this.getHeight()/2;
+        this.drawr_map.addPoint(this.mousex - offsetx, this.mousey - offsety, this.map_depth);
     }
     
     e.preventDefault(); //prevent mouse drag from trying to drag webpage
@@ -204,7 +208,9 @@ Drawr.prototype.mouseupEvent = function(e){
     
     if(e.which == 1 || e.touches && e.touches.length <= 1){
         this.mousedown = false;
-        this.drawr_map.addPoint(this.mousex, this.mousey, this.map_depth);
+        var offsetx = this.getWidth()/2;
+        var offsety = this.getHeight()/2;
+        this.drawr_map.addPoint(this.mousex - offsetx, this.mousey - offsety, this.map_depth);
     }
     
     e.preventDefault(); //prevent mouse drag from trying to drag webpage

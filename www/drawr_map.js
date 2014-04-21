@@ -4,7 +4,7 @@ function DrawrMap(drawr_client, offline_mode){
     //this.drawr_client = drawr_client;
     //this.offline_mode = offline_mode || 1;
     
-	this.per_pixel_scaling = 40;//8;
+	this.per_pixel_scaling = 20; //40;//8;
 	this.chunk_onscreen_size = CHUNK_BLOCK_SIZE * this.per_pixel_scaling;
 	
     // hash of chunks - not array because we need negative and positive locations, and to be able to skip some
@@ -243,12 +243,21 @@ DrawrMap.prototype.addPointComplicated = function(x,y,brush,size){
 
 DrawrMap.prototype.addPoint = function(x,y,z){
     // find where to add to chunk
+    x = x - this.offsetX;
+    y = y - this.offsetY;
+    
+    x = x + this.per_pixel_scaling/2; // center on the pixel/voxel thing
+    y = y + this.per_pixel_scaling/2; // center on the pixel/voxel thing
+    
+    x = x/xyUnitsToZ(z_depth_offset); // when z=0, it's still shifted in (+z_depth_offset) points
+    y = y/xyUnitsToZ(z_depth_offset);
+    
     var gamex = Math.floor(x/this.per_pixel_scaling); // convert to ingame (big) pixels
     var gamey = Math.floor(y/this.per_pixel_scaling);
-    var chunk_numx = Math.floor(gamex / this.chunk_block_size); // calculate which chunk this pixel is in
-    var chunk_numy = Math.floor(gamey / this.chunk_block_size);
-    var chunk_localx = gamex % this.chunk_block_size; // pixel location in chunk local coordinates
-    var chunk_localy = gamey % this.chunk_block_size; 
+    var chunk_numx = Math.floor(gamex / CHUNK_BLOCK_SIZE); // calculate which chunk this pixel is in
+    var chunk_numy = Math.floor(gamey / CHUNK_BLOCK_SIZE);
+    var chunk_localx = mod(gamex, CHUNK_BLOCK_SIZE); // pixel location in chunk local coordinates
+    var chunk_localy = mod(gamey, CHUNK_BLOCK_SIZE); 
     
     if(this.isChunkLoaded(chunk_numx, chunk_numy)){
         var chunk = this.chunks[chunk_numx][chunk_numy];
@@ -312,12 +321,6 @@ DrawrMap.prototype.getChunksAffected = function(gamex, gamey, brush, size){
 DrawrMap.prototype.draw = function(ctx, map_layer){
     
     var self = this;
-    /*this.foreachChunk(function(chunk_numx, chunk_numy){
-        var onscreenx = chunk_numx * self.chunk_onscreen_size + self.offsetX;
-        var onscreeny = chunk_numy * self.chunk_onscreen_size + self.offsetY;
-        var chunk_canvas = self.chunks[chunk_numx][chunk_numy].canvas;
-        ctx.drawImage(chunk_canvas, onscreenx, onscreeny, self.chunk_onscreen_size, self.chunk_onscreen_size);
-    });*/
     
     /*var deep_points = [];
     for(var i=-1;i<2;++i){
@@ -326,12 +329,21 @@ DrawrMap.prototype.draw = function(ctx, map_layer){
             deep_points = deep_points.concat(chunks.topLayerBelowZ(map_layer));
         }
     }*/
-    this.foreachChunk(function(chunk_numx, chunk_numy){
+    /*this.foreachChunk(function(chunk_numx, chunk_numy){ //hyperspace
         var onscreenx = chunk_numx * self.chunk_onscreen_size + self.offsetX;
         var onscreeny = chunk_numy * self.chunk_onscreen_size + self.offsetY;
         var offset_x = self.chunk_onscreen_size * 40; // nvm
         var offset_y = self.chunk_onscreen_size * 40;
         self.chunks[chunk_numx][chunk_numy].naive_draw(ctx, onscreenx, onscreeny);
+    });*/
+    
+    var points = [];
+    this.foreachChunk(function(chunk_numx, chunk_numy){
+        var onscreenx = chunk_numx * self.chunk_onscreen_size + self.offsetX;
+        var onscreeny = chunk_numy * self.chunk_onscreen_size + self.offsetY;
+        points = points.concat(self.chunks[chunk_numx][chunk_numy].getDrawPoints(map_layer, onscreenx, onscreeny, self.per_pixel_scaling));
     });
+    draw_cubes(ctx, points, this.per_pixel_scaling, ["blue"], true);
+    //draw_cubes(ctx, points, 40, ["red", "orange", "yellow", "green", "cyan", "blue", "purple"], true);
 }
 

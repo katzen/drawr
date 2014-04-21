@@ -82,3 +82,19 @@ DrawrChunk.prototype.naive_draw = function(ctx, offset_x, offset_y){
     }
     draw_cubes(ctx, points, 40, ["blue"], true);
 }
+
+DrawrChunk.prototype.getDrawPoints = function(z_layer, offset_x, offset_y, size){
+    var points = [];
+    var offset_z = -z_layer * 40;
+    DEBUG_MODE_GLOBAL && console.log(z_layer + " -> " + offset_z);
+    for(var x=0; x<CHUNK_BLOCK_SIZE; ++x){
+        for(var y=0; y<CHUNK_BLOCK_SIZE; ++y){
+            for(var z=z_layer; z<CHUNK_BLOCK_DEPTH; ++z){
+                if(this.get(x,y,z) != 0){
+                    points.push(point(x*size + offset_x, y*size + offset_y, z*size + offset_z));
+                }
+            }
+        }
+    }
+    return points;
+}
